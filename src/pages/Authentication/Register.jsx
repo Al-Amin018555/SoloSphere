@@ -1,12 +1,36 @@
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import bgImg from '../../assets/images/register.jpg'
 import logo from '../../assets/images/logo.png'
 import toast from "react-hot-toast";
+import useAuth from "../../hooks/useAuth";
 
 const Register = () => {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, createUser, updateUserProfile, user, setUser } = useAuth();
   const navigate = useNavigate();
 
+
+  const handleSignUp = async (e) => {
+    e.preventDefault()
+    const form = e.target;
+    const name = form.name.value;
+    const photo = form.photo.value;
+    const email = form.email.value;
+    const pass = form.password.value;
+    console.log(name, photo, email, pass)
+
+    try {
+      await createUser(email, pass)
+      await updateUserProfile(name, photo)
+      setUser({ ...user, displayName: name, photoURL: photo })
+      navigate('/')
+      toast.success("User created successfully")
+    }
+    catch (error) {
+      toast.error(error.message)
+    }
+
+
+  }
   const handleGoogleLogin = async () => {
     try {
       await signInWithGoogle();
@@ -56,7 +80,8 @@ const Register = () => {
               </svg>
             </div>
 
-            <span className='w-5/6 px-4 py-3 font-bold text-center'>
+            <span
+              className='w-5/6 px-4 py-3 font-bold text-center'>
               Sign in with Google
             </span>
           </div>
@@ -70,7 +95,7 @@ const Register = () => {
 
             <span className='w-1/5 border-b dark:border-gray-400 lg:w-1/4'></span>
           </div>
-          <form>
+          <form onSubmit={handleSignUp}>
             <div className='mt-4'>
               <label
                 className='block mb-2 text-sm font-medium text-gray-600 '
