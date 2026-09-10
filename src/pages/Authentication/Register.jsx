@@ -31,6 +31,7 @@ const Register = () => {
 
 
   }
+  
   const handleGoogleLogin = async () => {
     try {
       await signInWithGoogle();
